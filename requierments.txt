@@ -1,0 +1,1 @@
+pip install django psycopg2-binary django-tenants celery redis
