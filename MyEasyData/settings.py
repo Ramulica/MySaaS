@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]']
 SHARED_APPS = (
     'django_tenants',  # Must be first
     'customers',       # Your public app
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
