@@ -14,10 +14,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
+from core_metadata.views import get_csrf_token, session_login
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/builder/', include("builder.urls")),
+    # Roots for subdomains like acme.localhost:8000
+    path('api/builder/', include('builder.urls')),
+    path('api/csrf/', get_csrf_token),
+    path('api/auth/login/', session_login),
 ]

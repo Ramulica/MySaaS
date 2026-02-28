@@ -177,3 +177,12 @@ CSRF_COOKIE_DOMAIN = ".localhost"
 # dev-only: if you later switch to https, you’ll need Secure/SameSite adjustments
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
+
+# URL Routing Split
+PUBLIC_SCHEMA_URLCONF = 'MyEasyData.urls_public'
+TENANT_URLCONF = 'MyEasyData.urls_tenants'
+
+# Security for Subdomains
+CORS_ALLOW_ALL_ORIGINS = True # For dev; use REGEX for production
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = ["http://*.localhost:5173", "http://localhost:5173"]
