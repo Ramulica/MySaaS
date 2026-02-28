@@ -29,10 +29,13 @@ ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '[::1]']
 
 
 # Application definition
-
+DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
+# Ensure 'builder' is ONLY here
 SHARED_APPS = (
-    'django_tenants',  # Must be first
-    'customers',       # Your public app
+    'django_tenants',
+    'customers',
+    'core_metadata',
+    'corsheaders',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,15 +45,17 @@ SHARED_APPS = (
     'django.contrib.staticfiles',
 )
 
+# Ensure 'builder' is ONLY here
 TENANT_APPS = (
-    'builder', # Where the dynamic JSONB tables live
-    # Do NOT put django.contrib.auth here unless you want separate users per company
+    'builder', 
 )
 
+# This is what Django actually uses to load models
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
 MIDDLEWARE = [
     'django_tenants.middleware.main.TenantMainMiddleware', # Must be at the very top
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -83,10 +88,10 @@ WSGI_APPLICATION = 'MyEasyData.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+# settings.py
 
-DATABASE_ROUTERS = (
-    'django_tenants.routers.TenantSyncRouter',
-)
+# Remove the CustomTenantSyncRouter class code from here!
+
 
 DATABASES = {
     'default': {
@@ -141,3 +146,34 @@ TENANT_DOMAIN_MODEL = "customers.Domain"
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://acme.localhost:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
+AUTH_USER_MODEL = 'core_metadata.User'
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://*.localhost:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^http://localhost:5173$",
+    r"^http://[a-z0-9-]+\.localhost:5173$",
+]
+
+# cookies should work across subdomains (acme.localhost, globex.localhost)
+SESSION_COOKIE_DOMAIN = ".localhost"
+CSRF_COOKIE_DOMAIN = ".localhost"
+
+# dev-only: if you later switch to https, you’ll need Secure/SameSite adjustments
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
